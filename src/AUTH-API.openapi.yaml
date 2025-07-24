@@ -1,0 +1,2237 @@
+---
+openapi: 3.0.0
+info:
+  description: Auth Api Documentation
+  version: '1.0'
+  title: Auth Api Documentation
+  contact: {}
+servers:
+  - description: SwaggerHub API Auto Mocking
+    url: https://virtserver.swaggerhub.com/Observepoint/AuthenticationService/1.0
+  - url: https://auth.observepoint.com
+    description: Production
+  - url: https://auth.observepointstaging.com
+    description: Staging
+tags:
+  - name: account-controller
+    description: Account Controller
+  - name: login-controller
+    description: Login Controller
+  - name: integration-controller
+    description: Integration Controller
+paths:
+  "/accounts":
+    get:
+      tags:
+        - account-controller
+      summary: getAccounts
+      operationId: getAccounts
+      parameters:
+        - name: subdomain
+          in: query
+          description: subdomain
+          required: false
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Account"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    post:
+      tags:
+        - account-controller
+      summary: Create a new account
+      operationId: createAccount
+      requestBody:
+        description: Account creation details
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/CreateAccountRequest"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Account"
+        '400':
+          description: Bad request
+        '401':
+          description: Not authenticated
+        '403':
+          description: Creating accounts is only accessible by op-admin and above
+      deprecated: false
+  "/accounts/current":
+    get:
+      tags:
+        - account-controller
+      summary: Get information about authenticated user's account
+      operationId: getCurrentAccount
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AccountPreview"
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      deprecated: false
+  "/accounts/search":
+    parameters:
+      - "$ref": "#/components/parameters/PageParam"
+      - "$ref": "#/components/parameters/SizeParam"
+      - "$ref": "#/components/parameters/SortDescParam"
+      - name: sortBy
+        in: query
+        required: false
+        schema:
+          "$ref": "#/components/schemas/AccountSortEnum"
+    post:
+      tags:
+        - account-controller
+      summary: Get accounts filtered
+      operationId: getAccountsFiltered
+      requestBody:
+        description: Applicable filters
+        required: false
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/AccountSearchRequest"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AccountSearchResult"
+        '401':
+          description: Unauthorized
+  "/accounts/{accountId}":
+    get:
+      tags:
+        - account-controller
+      summary: getAccount
+      operationId: getAccountUsingGET
+      parameters:
+        - name: accountId
+          in: path
+          description: accountId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/Account"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    put:
+      tags:
+        - account-controller
+      summary: updateAccount
+      operationId: updateAccountUsingPUT
+      requestBody:
+        description: account body payload
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/Account"
+      parameters:
+        - name: accountId
+          in: path
+          description: accountId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  "/accounts/{accountId}/authenticationconfig":
+    get:
+      tags:
+        - account-controller
+      summary: getAuthenticationConfig
+      operationId: getAuthenticationConfigUsingGET
+      parameters:
+        - name: accountId
+          in: path
+          description: accountId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/FullAuthenticationConfig"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    post:
+      tags:
+        - account-controller
+      summary: createAuthenticationConfig
+      operationId: createAuthenticationConfigUsingPOST
+      requestBody:
+        description: payload for the authentication config
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/FullAuthenticationConfig"
+      parameters:
+        - name: accountId
+          in: path
+          description: accountId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+    put:
+      tags:
+        - account-controller
+      summary: updateAuthenticationConfig
+      operationId: updateAuthenticationConfigUsingPUT
+      requestBody:
+        description: payload for the authentication config
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/FullAuthenticationConfig"
+      parameters:
+        - name: accountId
+          in: path
+          description: accountId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  "/accounts/{accountId}/allow-overages":
+    put:
+      tags:
+        - account-controller
+      summary: updateAllowOveragesByAccount
+      operationId: updateAllowOveragesByAccount
+      requestBody:
+        description: payload to update allowOverages
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/AllowOveragesRequest"
+      parameters:
+        - name: accountId
+          in: path
+          description: accountId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  "/accounts/{accountId}/data-retention":
+    put:
+      tags:
+        - account-controller
+      summary: updateRetentionPolicyByAccount
+      operationId: updateRetentionPolicyByAccount
+      requestBody:
+        description: payload to update retention policy
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UpdateRetentionPolicyRequest"
+      parameters:
+        - name: accountId
+          in: path
+          description: accountId
+          required: true
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: OK
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  "/account/sharing-settings":
+    put:
+      tags:
+        - account-controller
+      operationId: UpdateSharingSettings
+      summary: Update sharing settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/SharingSettingsDTO"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/SharingSettingsDTO"
+        '401':
+          description: UnAuthorized
+        '403':
+          description: Forbidden
+    get:
+      tags:
+        - account-controller
+      operationId: GetSharingSettings
+      summary: Get sharing settings
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/SharingSettingsDTO"
+        '401':
+          description: UnAuthorized
+        '403':
+          description: Forbidden
+  "/accounts/logo-search":
+    get:
+      tags:
+        - logo-controller
+      summary: Search for a logo
+      operationId: searchForLogo
+      parameters:
+        - name: domain
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+  "/accounts/{accountId}/logo":
+    get:
+      tags:
+        - logo-controller
+      summary: Get logo
+      operationId: getExistingLogo
+      parameters:
+        - "$ref": "#/components/parameters/AccountId"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/LogoGetResponse"
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+    post:
+      tags:
+        - logo-controller
+      summary: Set logo
+      operationId: setLogo
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/LogoPostRequestUrl"
+          multipart/form-data:
+            schema:
+              "$ref": "#/components/schemas/LogoPostRequestForm"
+      parameters:
+        - "$ref": "#/components/parameters/AccountId"
+      responses:
+        '204':
+          description: NO_CONTENT
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+  "/login":
+    post:
+      tags:
+        - login-controller
+      summary: loginWithOPCredentials
+      operationId: loginWithOPCredentialsUsingPOST
+      requestBody:
+        description: payload of the login credentials
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/LoginRequest"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/OPToken"
+        '201':
+          description: Created
+        '401':
+          description: Unauthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      deprecated: false
+  "/logout":
+    post:
+      tags:
+        - logout-controller
+      operationId: Logout
+      summary: Invalidate the user token
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+  "/forgot-password":
+    post:
+      tags:
+        - login-controller
+      operationId: Forgot password
+      summary: Send forgot password request
+      requestBody:
+        description: payload of the forgot password request
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/ForgotPasswordRequest"
+      responses:
+        '200':
+          description: OK
+  "/reset-password":
+    post:
+      tags:
+        - login-controller
+      operationId: Reset password
+      summary: Send reset password request
+      requestBody:
+        description: payload of the reset password request
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/ResetPasswordRequest"
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+  "/signup":
+    post:
+      tags:
+        - signup-controller
+      operationId: Signup
+      summary: Signup process to create a new account with a primary user and trigger
+        marketing webhooks
+      requestBody:
+        description: payload of the signup request
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/SignupRequest"
+      responses:
+        '204':
+          description: Success
+        '400':
+          description: Bad Request
+        '403':
+          description: Forbidden
+  "/sso/{subdomain}/login":
+    get:
+      tags:
+        - sso-controller
+      operationId: Get Insensitive SSO Metadata
+      summary: Get Insensitive SSO Metadata
+      description: Get Insensitive SSO Metadata
+      parameters:
+        - in: path
+          name: subdomain
+          description: subdomain prefix for an SSO account
+          schema:
+            type: string
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/BaseAuthenticationConfig"
+        '401':
+          description: UnAuthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  "/users":
+    get:
+      tags:
+        - user-controller
+      operationId: Get Users
+      summary: Get All Users for Account
+      description: 'Get all Users for Account
+
+        '
+      parameters:
+        - in: query
+          name: accountId
+          schema:
+            type: integer
+          required: false
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/ArrayOfUsers"
+        '400':
+          description: Bad Request
+        '401':
+          description: UnAuthorized
+        '403':
+          description: Forbidden
+  "/users/{userId}":
+    get:
+      tags:
+        - user-controller
+      operationId: GetUser
+      summary: get User
+      description: get a single User
+      parameters:
+        - in: path
+          name: userId
+          schema:
+            type: integer
+          required: true
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/UserResponse"
+        '401':
+          description: UnAuthorized
+        '403':
+          description: Forbidden
+  "/visitor-login":
+    post:
+      tags:
+        - sharing-controller
+      operationId: LoginBySharingAccessToken
+      summary: Login visitor user by sharing access token
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/VisitorLoginRequest"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/VisitorLoginResponse"
+        '404':
+          description: Not Found
+        '410':
+          description: Sharing token expired
+  "/share":
+    post:
+      tags:
+        - sharing-controller
+      operationId: CreateSharingLink
+      summary: Create sharing link
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/SharingRequest"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/SharingResponse"
+        '401':
+          description: UnAuthorized
+        '403':
+          description: Forbidden
+  "/shared-links":
+    post:
+      tags:
+        - sharing-controller
+      operationId: GetSharingLinks
+      summary: Get sharing links
+      description: Get all sharing links for Account. Only allowed for users with
+        Account Admin or higher permissions
+      parameters:
+        - "$ref": "#/components/parameters/PageParam"
+        - "$ref": "#/components/parameters/SizeParam"
+        - "$ref": "#/components/parameters/SortDescParam"
+        - in: query
+          name: sortBy
+          schema:
+            "$ref": "#/components/schemas/SharingLinksSortByEnum"
+          required: false
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/SharedLinksRequest"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/SharedLinksResponse"
+        '401':
+          description: UnAuthorized
+        '403':
+          description: Forbidden
+  "/shared-links/{sharedItemType}/{sharedItemId}":
+    get:
+      tags:
+        - sharing-controller
+      operationId: GetSharingLinksForSharedItem
+      summary: Get sharing links for a specific shared item
+      parameters:
+        - name: sharedItemType
+          in: path
+          required: true
+          deprecated: false
+          x-allowEmptyValue: false
+          schema:
+            "$ref": "#/components/schemas/SharedItemType"
+        - name: sharedItemId
+          in: path
+          required: true
+          deprecated: false
+          x-allowEmptyValue: false
+          schema:
+            oneOf:
+              - "$ref": "#/components/schemas/SharedItem_RunId"
+              - "$ref": "#/components/schemas/SharedItem_SavedReportId"
+      responses:
+        '200':
+          description: Successful response
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/SharedLinksResponse"
+        '401':
+          "$ref": "#/components/responses/UnAuthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
+  "/shared-links/status":
+    patch:
+      tags:
+        - sharing-controller
+      operationId: updateSharedLinksStatus
+      summary: Update shared links status
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UpdateSharedLinksStatusRequestDTO"
+      responses:
+        '204':
+          description: Successful response
+        '401':
+          description: UnAuthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  "/shared-links/{sharedLinkId}/status":
+    parameters:
+      - "$ref": "#/components/parameters/SharedLinkId"
+    patch:
+      tags:
+        - sharing-controller
+      operationId: updateSingleSharedLinkStatus
+      summary: Update status of a single shared link
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/UpdateSharedLinkStatusRequestDTO"
+      responses:
+        '204':
+          description: Status updated successfully
+        '401':
+          "$ref": "#/components/responses/UnAuthorized"
+        '403':
+          "$ref": "#/components/responses/Forbidden"
+        '404':
+          "$ref": "#/components/responses/NotFound"
+  "/shared-links/{sharedLinkId}/send-email":
+    parameters:
+      - "$ref": "#/components/parameters/SharedLinkId"
+    post:
+      tags:
+        - sharing-controller
+      operationId: sendSharedLinkEmails
+      summary: Send emails for existing shared link
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/SendSharedLinkEmailsRequestDTO"
+      responses:
+        '204':
+          description: Emails sent successfully
+        '401':
+          description: UnAuthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  "/shared-links/{sharedLinkId}":
+    parameters:
+      - "$ref": "#/components/parameters/SharedLinkId"
+    delete:
+      tags:
+        - sharing-controller
+      operationId: deleteSharedLinkById
+      summary: Delete shared link by id
+      responses:
+        '204':
+          description: Deleted successfully
+        '401':
+          description: UnAuthorized
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+  "/accounts/{accountId}/data-layers":
+    get:
+      tags:
+        - account-controller
+      summary: Get Account Data Layers
+      description: Endpoint to get data layers for an account
+      operationId: getAccountDataLayers
+      parameters:
+        - "$ref": "#/components/parameters/AccountId"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AccountDataLayersDTO"
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized
+        '404':
+          description: Account not found
+    put:
+      tags:
+        - account-controller
+      summary: Update Account Data Layers
+      description: Endpoint to update data layers for an account
+      operationId: updateAccountDataLayers
+      parameters:
+        - "$ref": "#/components/parameters/AccountId"
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              "$ref": "#/components/schemas/DataLayersRequest"
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                "$ref": "#/components/schemas/AccountDataLayersDTO"
+        '401':
+          description: Not authenticated
+        '403':
+          description: Not authorized - requires Account Admin or higher
+        '404':
+          description: Account not found
+components:
+  schemas:
+    Account:
+      type: object
+      properties:
+        id:
+          type: integer
+        accountType:
+          type: integer
+        name:
+          type: string
+        maxUsers:
+          type: integer
+        strongPasswordPolicy:
+          type: boolean
+        subDomainIdentifier:
+          type: string
+        primaryUser:
+          "$ref": "#/components/schemas/User"
+        auditPageLimit:
+          type: integer
+        webJourneyRunLimit:
+          type: integer
+        isSharingEnabled:
+          type: boolean
+        partner:
+          "$ref": "#/components/schemas/Partner"
+        allowOverages:
+          type: boolean
+        retentionPolicy:
+          "$ref": "#/components/schemas/RetentionPolicy"
+      title: Account
+    AccountId:
+      type: integer
+      description: Account ID
+      minimum: 1
+      example: 21
+    AccountOveragesResponse_DTO:
+      allOf:
+        - "$ref": "#/components/schemas/AllowOverages_DTO"
+      type: object
+      description: Indicates if overages are allowed or restricted by account
+      required:
+        - accountId
+      properties:
+        accountId:
+          type: integer
+    AllowOverages_DTO:
+      type: object
+      description: Indicates if overages are allowed or restricted
+      required:
+        - allowOverages
+      properties:
+        allowOverages:
+          type: boolean
+          default: true
+    AccountPreview:
+      type: object
+      properties:
+        id:
+          type: integer
+        accountType:
+          type: integer
+        isSharingEnabled:
+          type: boolean
+        partner:
+          "$ref": "#/components/schemas/Partner"
+      title: AccountPreview
+    AllowOveragesRequest:
+      type: object
+      description: Indicates if overages are allowed or restricted
+      required:
+        - allowOverages
+      properties:
+        allowOverages:
+          type: boolean
+          default: true
+    BaseAuthenticationConfig:
+      type: object
+      required:
+        - authenticationType
+      properties:
+        authenticationType:
+          type: string
+        idpLoginUrl:
+          type: string
+        idpLogoutUrl:
+          type: string
+      title: BaseAuthenticationConfig
+    FullAuthenticationConfig:
+      allOf:
+        - "$ref": "#/components/schemas/BaseAuthenticationConfig"
+      type: object
+      properties:
+        certificate:
+          type: string
+        createNewUser:
+          type: boolean
+        identityId:
+          type: string
+        idpEntityId:
+          type: string
+      title: AuthenticationConfig
+    LoginRequest:
+      type: object
+      properties:
+        accountid:
+          type: integer
+        password:
+          type: string
+        username:
+          type: string
+      title: LoginRequest
+    OPToken:
+      type: object
+      properties:
+        accessToken:
+          type: string
+        credentialsExpired:
+          type: boolean
+        expires:
+          type: integer
+        subDomain:
+          type: string
+        userId:
+          type: integer
+      required:
+        - accessToken
+      title: OPToken
+    ForgotPasswordRequest:
+      type: object
+      properties:
+        username:
+          type: string
+      required:
+        - username
+      title: ForgotPasswordRequest
+    SignupRequest:
+      type: object
+      required:
+        - emailAddress
+        - firstName
+        - lastName
+        - password
+        - country
+        - timezone
+        - recaptchaToken
+        - marketing
+      properties:
+        emailAddress:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        password:
+          type: string
+          description: a plain-text password
+        country:
+          type: string
+          description: The user-selected country
+        timezone:
+          type: string
+          description: The default user time zone. e.g. "America/Denver"
+        recaptchaToken:
+          type: string
+          description: A ReCaptcha token generated by the front-end to be validated
+            by the back-end
+        marketing:
+          "$ref": "#/components/schemas/SignupMarketingData"
+    SignupMarketingData:
+      type: object
+      description: |
+        Marketing data collected during signup. UTM and pricing fields will be provided based upon the user's
+        journey to the signup portal.
+      required:
+        - Product_Demo_Requested__c
+        - Receiving_Nurture_Emails__c
+      properties:
+        Product_Demo_Requested__c:
+          type: boolean
+        Receiving_Nurture_Emails__c:
+          type: boolean
+        uTMSource:
+          type: string
+        uTMMedium:
+          type: string
+        uTMCampaign:
+          type: string
+        uTMTerm:
+          type: string
+        uTMContent:
+          type: string
+        Pricing_Page_Audit_Volume__c:
+          type: integer
+        Pricing_Page_Journey_Package__c:
+          type: integer
+        Pricing_Page_VPN__c:
+          type: boolean
+        Pricing_Page_SSO__c:
+          type: boolean
+    ResetPasswordRequest:
+      type: object
+      properties:
+        token:
+          type: string
+        newPassword:
+          type: string
+      required:
+        - token
+        - newPassword
+      title: ResetPasswordRequest
+    ArrayOfUsers:
+      type: array
+      items:
+        "$ref": "#/components/schemas/User"
+    User:
+      type: object
+      properties:
+        id:
+          type: integer
+          readOnly: true
+        firstName:
+          type: string
+        lastName:
+          type: string
+        userName:
+          type: string
+        emailAddress:
+          type: string
+          pattern: ^((?:[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-zA-Z0-9!#$%&'*+/=?^_`{|}~-]+)*|"(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21\x23-\x5b\x5d-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])*")@(?:(?:[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9-]*[a-zA-Z0-9])?|\[(?:(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?)\.){3}(?:25[0-5]|2[0-4][0-9]|[01]?[0-9][0-9]?|[a-zA-Z0-9-]*[a-zA-Z0-9]:(?:[\x01-\x08\x0b\x0c\x0e-\x1f\x21-\x5a\x53-\x7f]|\\[\x01-\x09\x0b\x0c\x0e-\x7f])+)\])){1}$
+        accountId:
+          type: integer
+          readOnly: true
+        role:
+          "$ref": "#/components/schemas/Role"
+        timezone:
+          "$ref": "#/components/schemas/Timezone"
+        blockedUntil:
+          type: string
+          format: date-time
+          nullable: true
+        lastLogin:
+          type: string
+          format: date-time
+          readOnly: true
+          nullable: true
+      required:
+        - firstName
+        - lastName
+        - userName
+        - emailAddress
+        - role
+        - timezone
+    UserResponse:
+      type: object
+      properties:
+        id:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        emailAddress:
+          type: string
+        accountId:
+          type: integer
+        role:
+          "$ref": "#/components/schemas/Role"
+        timezone:
+          "$ref": "#/components/schemas/Timezone"
+    UpdateRetentionPolicyRequest:
+      type: object
+      properties:
+        retentionPolicy:
+          "$ref": "#/components/schemas/RetentionPolicyTypeEnum"
+    Role:
+      type: string
+      enum:
+        - Guest
+        - User
+        - Admin
+        - OpAdmin
+        - OpSysAdmin
+    Timezone:
+      type: string
+      enum:
+        - International Date Line West
+        - Pacific/Midway
+        - Midway Island
+        - American Samoa
+        - Pacific/Pago_Pago
+        - Hawaii
+        - Pacific/Honolulu
+        - Alaska
+        - America/Juneau
+        - Pacific Time (US & Canada)
+        - America/Los_Angeles
+        - Tijuana
+        - America/Tijuana
+        - Mountain Time (US & Canada)
+        - America/Denver
+        - Arizona
+        - America/Phoenix
+        - Chihuahua
+        - America/Chihuahua
+        - Mazatlan
+        - America/Mazatlan
+        - Central Time (US & Canada)
+        - America/Chicago
+        - Saskatchewan
+        - America/Regina
+        - Guadalajara
+        - America/Mexico_City
+        - Mexico City
+        - Monterrey
+        - America/Monterrey
+        - Central America
+        - America/Guatemala
+        - Eastern Time (US & Canada)
+        - America/New_York
+        - Indiana (East)
+        - America/Indiana/Indianapolis
+        - Bogota
+        - America/Bogota
+        - Lima
+        - America/Lima
+        - Quito
+        - Atlantic Time (Canada)
+        - America/Halifax
+        - Caracas
+        - America/Caracas
+        - La Paz
+        - America/La_Paz
+        - Santiago
+        - America/Santiago
+        - Newfoundland
+        - America/St_Johns
+        - Brasilia
+        - America/Sao_Paulo
+        - Buenos Aires
+        - America/Argentina/Buenos_Aires
+        - Georgetown
+        - America/Guyana
+        - Greenland
+        - America/Godthab
+        - Mid-Atlantic
+        - Atlantic/South_Georgia
+        - Azores
+        - Atlantic/Azores
+        - Cape Verde Is.
+        - Atlantic/Cape_Verde
+        - Dublin
+        - Europe/Dublin
+        - Edinburgh
+        - Lisbon
+        - Europe/Lisbon
+        - London
+        - Europe/London
+        - Casablanca
+        - Africa/Casablanca
+        - Monrovia
+        - Africa/Monrovia
+        - UTC
+        - Etc/UTC
+        - Belgrade
+        - Europe/Belgrade
+        - Bratislava
+        - Europe/Bratislava
+        - Budapest
+        - Europe/Budapest
+        - Ljubljana
+        - Europe/Ljubljana
+        - Prague
+        - Europe/Prague
+        - Sarajevo
+        - Europe/Sarajevo
+        - Skopje
+        - Europe/Skopje
+        - Warsaw
+        - Europe/Warsaw
+        - Zagreb
+        - Europe/Zagreb
+        - Brussels
+        - Europe/Brussels
+        - Copenhagen
+        - Europe/Copenhagen
+        - Madrid
+        - Europe/Madrid
+        - Paris
+        - Europe/Paris
+        - Amsterdam
+        - Europe/Amsterdam
+        - Berlin
+        - Bern
+        - Europe/Berlin
+        - Rome
+        - Europe/Rome
+        - Stockholm
+        - Europe/Stockholm
+        - Vienna
+        - Europe/Vienna
+        - West Central Africa
+        - Africa/Algiers
+        - Bucharest
+        - Europe/Bucharest
+        - Cairo
+        - Africa/Cairo
+        - Helsinki
+        - Europe/Helsinki
+        - Kyiv
+        - Europe/Kiev
+        - Riga
+        - Europe/Riga
+        - Sofia
+        - Europe/Sofia
+        - Tallinn
+        - Europe/Tallinn
+        - Vilnius
+        - Europe/Vilnius
+        - Athens
+        - Europe/Athens
+        - Istanbul
+        - Europe/Istanbul
+        - Minsk
+        - Europe/Minsk
+        - Jerusalem
+        - Asia/Jerusalem
+        - Harare
+        - Africa/Harare
+        - Pretoria
+        - Africa/Johannesburg
+        - Moscow
+        - St. Petersburg
+        - Europe/Moscow
+        - Volgograd
+        - Kuwait
+        - Asia/Kuwait
+        - Riyadh
+        - Asia/Riyadh
+        - Nairobi
+        - Africa/Nairobi
+        - Baghdad
+        - Asia/Baghdad
+        - Tehran
+        - Asia/Tehran
+        - Abu Dhabi
+        - Asia/Muscat
+        - Muscat
+        - Baku
+        - Asia/Baku
+        - Tbilisi
+        - Asia/Tbilisi
+        - Yerevan
+        - Asia/Yerevan
+        - Kabul
+        - Asia/Kabul
+        - Ekaterinburg
+        - Asia/Yekaterinburg
+        - Islamabad
+        - Asia/Karachi
+        - Karachi
+        - Tashkent
+        - Asia/Tashkent
+        - Chennai
+        - Asia/Kolkata
+        - Kolkata
+        - Mumbai
+        - New Delhi
+        - Kathmandu
+        - Asia/Kathmandu
+        - Astana
+        - Asia/Dhaka
+        - Dhaka
+        - Sri Jayawardenepura
+        - Asia/Colombo
+        - Almaty
+        - Asia/Almaty
+        - Novosibirsk
+        - Asia/Novosibirsk
+        - Rangoon
+        - Asia/Rangoon
+        - Bangkok
+        - Hanoi
+        - Asia/Bangkok
+        - Jakarta
+        - Asia/Jakarta
+        - Krasnoyarsk
+        - Asia/Krasnoyarsk
+        - Beijing
+        - Asia/Shanghai
+        - Chongqing
+        - Asia/Chongqing
+        - Hong Kong
+        - Asia/Hong_Kong
+        - Urumqi
+        - Asia/Urumqi
+        - Kuala Lumpur
+        - Asia/Kuala_Lumpur
+        - Singapore
+        - Asia/Singapore
+        - Taipei
+        - Asia/Taipei
+        - Perth
+        - Australia/Perth
+        - Irkutsk
+        - Asia/Irkutsk
+        - Ulaanbaatar
+        - Ulaan Baatar
+        - Asia/Ulaanbaatar
+        - Seoul
+        - Asia/Seoul
+        - Osaka
+        - Asia/Tokyo
+        - Sapporo
+        - Tokyo
+        - Yakutsk
+        - Asia/Yakutsk
+        - Darwin
+        - Australia/Darwin
+        - Adelaide
+        - Australia/Adelaide
+        - Canberra
+        - Melbourne
+        - Australia/Melbourne
+        - Sydney
+        - Australia/Sydney
+        - Brisbane
+        - Australia/Brisbane
+        - Hobart
+        - Australia/Hobart
+        - Vladivostok
+        - Asia/Vladivostok
+        - Guam
+        - Pacific/Guam
+        - Port Moresby
+        - Pacific/Port_Moresby
+        - Magadan
+        - Asia/Magadan
+        - Pacific/Guadalcanal
+        - Solomon Is.
+        - New Caledonia
+        - Pacific/Noumea
+        - Fiji
+        - Pacific/Fiji
+        - Kamchatka
+        - Asia/Kamchatka
+        - Marshall Is.
+        - Pacific/Majuro
+        - Auckland
+        - Wellington
+        - Pacific/Auckland
+        - Nuku'alofa
+        - Pacific/Tongatapu
+        - Tokelau Is.
+        - Pacific/Fakaofo
+        - Pacific/Chatham
+        - Samoa
+        - Pacific/Apia
+    AccountSortEnum:
+      type: string
+      enum:
+        - id
+        - company
+        - status
+        - type
+        - username
+        - email
+    AccountStatusEnum:
+      type: string
+      enum:
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+      x-enum-varnames:
+        - ACTIVE
+        - ACTIVE_BILLING_PROBLEM
+        - INACTIVE_BILLING_FAILED
+        - INACTIVE_USER_CANCELLED
+        - INACTIVE
+        - DEMO
+    AccountStatusEnumInt:
+      type: integer
+      enum:
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+        - 7
+      x-enum-varnames:
+        - ACTIVE
+        - ACTIVE_BILLING_PROBLEM
+        - INACTIVE_BILLING_FAILED
+        - INACTIVE_USER_CANCELLED
+        - INACTIVE
+        - DEMO
+    AccountSearchRequest:
+      type: object
+      properties:
+        search:
+          type: string
+          description: Supports search by account id, account name, user name, first
+            name, last name and email
+        types:
+          type: array
+          items:
+            type: integer
+        statuses:
+          type: array
+          items:
+            "$ref": "#/components/schemas/AccountStatusEnum"
+    AccountSearchResultItem_Vpn:
+      type: object
+      properties:
+        vpnCredentials:
+          type: string
+        vpnSupport:
+          type: boolean
+    AccountSearchResultItem_PrimaryUser:
+      type: object
+      properties:
+        id:
+          type: integer
+        username:
+          type: string
+        firstName:
+          type: string
+        lastName:
+          type: string
+        permissions:
+          type: integer
+        email:
+          type: string
+        timezone:
+          type: string
+        blockedUntil:
+          type: string
+        lastLogin:
+          type: string
+    AccountSearchResultItem:
+      type: object
+      properties:
+        id:
+          type: integer
+        name:
+          type: string
+        maxUsers:
+          type: integer
+        maxDomains:
+          type: integer
+        maxMobileApps:
+          type: integer
+        concurrentAudits:
+          type: integer
+        concurrentJourneys:
+          type: integer
+        status:
+          "$ref": "#/components/schemas/AccountStatusEnum"
+        accountType:
+          type: integer
+        videoSupport:
+          type: boolean
+        reportSupport:
+          type: boolean
+        authSupport:
+          type: boolean
+        deviceSupport:
+          type: boolean
+        customProxySupport:
+          type: boolean
+        auditActionSupport:
+          type: boolean
+        strongPasswordSupport:
+          type: boolean
+        notes:
+          type: string
+        deleted:
+          type: boolean
+        primaryUser:
+          "$ref": "#/components/schemas/AccountSearchResultItem_PrimaryUser"
+        domains:
+          type: array
+          items:
+            type: string
+        vpn:
+          "$ref": "#/components/schemas/AccountSearchResultItem_Vpn"
+        dataWareHouse:
+          type: boolean
+    AccountSearchResult:
+      type: object
+      properties:
+        metadata:
+          "$ref": "#/components/schemas/CommonIterableResponseMetadata"
+        accounts:
+          type: array
+          items:
+            "$ref": "#/components/schemas/AccountSearchResultItem"
+    CommonIterableResponseMetadata:
+      description: Common metadata for iterable
+      type: object
+      required:
+        - pagination
+      properties:
+        pagination:
+          "$ref": "#/components/schemas/PaginationMetadata"
+    PaginationMetadata:
+      type: object
+      required:
+        - totalCount
+        - totalPageCount
+        - pageSize
+        - currentPageSize
+        - currentPageNumber
+      properties:
+        totalCount:
+          description: Total number of items available from all result pages combined
+          type: integer
+        totalPageCount:
+          description: Total number of pages available
+          type: integer
+        pageSize:
+          description: Page size - number of items per result page configured by `size`
+            query parameter or default page size
+          type: integer
+        currentPageSize:
+          description: Number of items in current result page
+          type: integer
+        currentPageNumber:
+          description: Current page number/ordinal
+          type: integer
+    VisitorLoginRequest:
+      type: object
+      required:
+        - accessToken
+      properties:
+        accessToken:
+          type: string
+          description: Sharing access token
+    VisitorLoginResponse:
+      type: object
+      required:
+        - bearerToken
+        - accountType
+        - sharedItemDetails
+      properties:
+        bearerToken:
+          type: string
+        bearerTokenExpiresInSeconds:
+          type: integer
+        visitorUserId:
+          type: integer
+        accountType:
+          type: integer
+        sharedItemDetails:
+          "$ref": "#/components/schemas/Response_SharedItemDetails"
+    Request_SharedItemDetails:
+      type: object
+      description: 'Subtypes: - SharedItemDetails_FolderItemRunReport - Request_SharedItemDetails_SavedGridReport
+
+        '
+      required:
+        - sharedItemType
+      properties:
+        sharedItemType:
+          "$ref": "#/components/schemas/SharedItemType"
+      discriminator:
+        propertyName: sharedItemType
+        mapping:
+          FOLDER_ITEM_RUN_REPORT: "#/components/schemas/SharedItemDetails_FolderItemRunReport"
+          SAVED_GRID_REPORT: "#/components/schemas/Request_SharedItemDetails_SavedGridReport"
+    Response_SharedItemDetails:
+      type: object
+      description: 'Subtypes: - SharedItemDetails_FolderItemRunReport - Response_SharedItemDetails_SavedGridReport
+
+        '
+      required:
+        - sharedItemType
+      properties:
+        sharedItemType:
+          "$ref": "#/components/schemas/SharedItemType"
+      discriminator:
+        propertyName: sharedItemType
+        mapping:
+          FOLDER_ITEM_RUN_REPORT: "#/components/schemas/SharedItemDetails_FolderItemRunReport"
+          SAVED_GRID_REPORT: "#/components/schemas/Response_SharedItemDetails_SavedGridReport"
+    SharedItemDetails_FolderItemRunReport:
+      allOf:
+        - "$ref": "#/components/schemas/Request_SharedItemDetails"
+        - type: object
+          required:
+            - itemId
+            - itemType
+            - runId
+            - reportName
+            - filters
+            - sharedItemType
+          properties:
+            itemId:
+              type: integer
+              format: int64
+            itemType:
+              "$ref": "#/components/schemas/ItemType"
+            runId:
+              "$ref": "#/components/schemas/SharedItem_RunId"
+            reportName:
+              type: string
+            reportPath:
+              type: string
+            filters:
+              type: object
+    SharedItem_RunId:
+      type: integer
+      format: int64
+    Request_SharedItemDetails_SavedGridReport:
+      allOf:
+        - "$ref": "#/components/schemas/Request_SharedItemDetails"
+        - type: object
+          required:
+            - savedReportId
+          properties:
+            savedReportId:
+              "$ref": "#/components/schemas/SharedItem_SavedReportId"
+    SharedItem_SavedReportId:
+      type: integer
+      format: int64
+    Response_SharedItemDetails_SavedGridReport:
+      allOf:
+        - "$ref": "#/components/schemas/Response_SharedItemDetails"
+        - type: object
+          required:
+            - savedReportId
+            - gridEntityType
+          properties:
+            savedReportId:
+              type: integer
+              format: int64
+            gridEntityType:
+              "$ref": "#/components/schemas/GridApi_GridEntityTypeEnum"
+    SharingLinksSortByEnum:
+      type: string
+      enum:
+        - ITEM_NAME
+        - REPORT_NAME
+        - FOLDER_NAME
+        - CREATED_BY
+        - VIEW_COUNT
+        - EXPIRES
+        - STATUS
+    SharedItemType:
+      type: string
+      enum:
+        - FOLDER_ITEM_RUN_REPORT
+        - SAVED_GRID_REPORT
+    GridApi_GridEntityTypeEnum:
+      type: string
+      enum:
+        - web_audit_runs
+        - web_journey_runs
+        - pages
+        - cookies
+        - tags
+        - accessibility_issues
+      x-enum-varnames:
+        - AUDIT_RUNS
+        - JOURNEY_RUNS
+        - PAGES
+        - COOKIES
+        - TAGS
+        - ACCESSIBILITY_ISSUES
+    ItemType:
+      type: integer
+      enum:
+        - 1
+        - 2
+        - 3
+        - 4
+      x-enum-varnames:
+        - AUDIT
+        - WEB_JOURNEY
+        - APP_JOURNEY
+        - LIVE_CONNECT
+    SharingRequest:
+      type: object
+      required:
+        - sharedItemDetails
+      properties:
+        sharedItemDetails:
+          "$ref": "#/components/schemas/Request_SharedItemDetails"
+        customMessage:
+          type: string
+        emails:
+          type: array
+          items:
+            type: string
+            maxItems: 10
+    SharingResponse:
+      type: object
+      required:
+        - id
+        - url
+        - expires
+      properties:
+        id:
+          description: Shared link ID
+          type: integer
+          format: int64
+        url:
+          description: Full url
+          type: string
+        expires:
+          "$ref": "#/components/schemas/DateAndTime"
+    DateAndTime:
+      type: string
+      format: date-time
+      description: Date-time in ISO 8601 format
+    SharingSettingsDTO:
+      type: object
+      required:
+        - isSharingEnabled
+      properties:
+        isSharingEnabled:
+          type: boolean
+    SharedLinksRequest:
+      type: object
+      required:
+        - sharedLinks
+      properties:
+        itemName:
+          type: string
+          description: when present works as "item `name` contains (ignore case) given
+            substring" filter
+        reportName:
+          type: string
+          description: when present works as "report `name` contains (ignore case)
+            given substring" filter
+        folderName:
+          type: string
+          description: when present works as "folder `name` contains (ignore case)
+            given substring" filter
+        isExpired:
+          type: boolean
+          description: when present works as "link `is_expired` equals given value"
+            filter
+        isDisabled:
+          type: boolean
+          description: when present works as "link `is_disabled` equals given value"
+            filter
+    SharedLinksResponse:
+      type: object
+      required:
+        - metadata
+        - sharedLinks
+      properties:
+        metadata:
+          "$ref": "#/components/schemas/CommonIterableResponseMetadata"
+        sharedLinks:
+          type: array
+          items:
+            "$ref": "#/components/schemas/SharedLink"
+    SharedLink:
+      type: object
+      description: 'Subtypes: - SharedLink_FolderItemRunReport - SharedLink_SavedGridReport
+
+        '
+      required:
+        - sharedItemType
+        - id
+        - link
+        - sharedByUser
+        - sharedTo
+        - viewCount
+        - expires
+        - disabled
+        - expired
+      properties:
+        sharedItemType:
+          "$ref": "#/components/schemas/SharedItemType"
+        id:
+          type: integer
+          format: int64
+        link:
+          type: string
+        sharedByUser:
+          "$ref": "#/components/schemas/SharedByUser"
+        sharedTo:
+          type: array
+          items:
+            type: string
+        viewCount:
+          type: integer
+          format: int64
+        expires:
+          "$ref": "#/components/schemas/DateAndTime"
+        disabled:
+          type: boolean
+        expired:
+          type: boolean
+      discriminator:
+        propertyName: sharedItemType
+        mapping:
+          FOLDER_ITEM_RUN_REPORT: "#/components/schemas/SharedLink_FolderItemRunReport"
+          SAVED_GRID_REPORT: "#/components/schemas/SharedLink_SavedGridReport"
+    SharedLink_FolderItemRunReport:
+      allOf:
+        - "$ref": "#/components/schemas/SharedLink"
+        - type: object
+          required:
+            - itemId
+            - itemType
+            - itemName
+            - reportPath
+            - reportName
+            - folderId
+            - folderName
+          properties:
+            itemId:
+              type: integer
+              format: int64
+            itemType:
+              "$ref": "#/components/schemas/ItemType"
+            itemName:
+              type: string
+            reportPath:
+              type: string
+            reportName:
+              type: string
+            folderId:
+              type: integer
+              format: int64
+            folderName:
+              type: string
+    SharedLink_SavedGridReport:
+      allOf:
+        - "$ref": "#/components/schemas/SharedLink"
+        - type: object
+          required:
+            - savedReportId
+            - savedReportName
+            - savedReportGridEntityType
+          properties:
+            savedReportId:
+              type: integer
+              format: int64
+            savedReportName:
+              type: string
+            savedReportGridEntityType:
+              "$ref": "#/components/schemas/GridApi_GridEntityTypeEnum"
+    SharedByUser:
+      type: object
+      required:
+        - firstName
+        - lastName
+        - email
+      properties:
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+    Partner:
+      type: object
+      properties:
+        id:
+          type: integer
+    UpdateSharedLinksStatusRequestDTO:
+      type: object
+      required:
+        - sharedLinkIds
+        - operationType
+      properties:
+        sharedLinkIds:
+          type: array
+          minItems: 1
+          items:
+            type: integer
+            format: int64
+        operationType:
+          "$ref": "#/components/schemas/SharedLinkStatusUpdateOperationTypeEnum"
+    SharedLinkStatusUpdateOperationTypeEnum:
+      type: string
+      enum:
+        - enable
+        - disable
+    UpdateSharedLinkStatusRequestDTO:
+      type: object
+      required:
+        - operationType
+      properties:
+        operationType:
+          "$ref": "#/components/schemas/SharedLinkStatusUpdateOperationTypeEnum"
+    SendSharedLinkEmailsRequestDTO:
+      type: object
+      required:
+        - emails
+      properties:
+        customMessage:
+          type: string
+        emails:
+          type: array
+          items:
+            type: string
+            minItems: 1
+            maxItems: 10
+    RetentionPolicy:
+      type: object
+      required:
+        - name
+        - unit
+        - duration
+      properties:
+        name:
+          "$ref": "#/components/schemas/RetentionPolicyTypeEnum"
+        unit:
+          "$ref": "#/components/schemas/RetentionPolicyUnitEnum"
+        duration:
+          type: integer
+    RetentionPolicyTypeEnum:
+      type: string
+      enum:
+        - STANDARD
+        - STANDARD_PLUS
+        - EXTENDED
+    RetentionPolicyUnitEnum:
+      type: string
+      enum:
+        - DAYS
+        - MONTHS
+    LogoGetResponse:
+      description: The logo as a byte array
+      type: string
+      format: byte
+    LogoPostRequestUrl:
+      type: object
+      required:
+        - url
+      properties:
+        url:
+          type: string
+          format: byte
+      description: A full URL pointing to the account's logo
+    LogoPostRequestForm:
+      type: object
+      required:
+        - image
+        - format
+      properties:
+        image:
+          type: string
+          format: byte
+        format:
+          type: string
+          enum:
+            - svg
+            - png
+            - jpeg
+            - webp
+    AccountType:
+      type: integer
+      enum:
+        - 0
+        - 1
+        - 2
+        - 3
+        - 4
+        - 5
+        - 6
+      x-enum-varnames:
+        - AdobeAuditor
+        - FreeTrial
+        - Contract
+        - CPMPartner
+        - Sample
+        - ObservePointInternalAccount
+        - ContractSelfService
+    CreateAccountDTO:
+      type: object
+      required:
+        - company
+      properties:
+        accountType:
+          type: AccountType
+          default: 1
+          "$ref": "#/components/schemas/AccountType"
+        status:
+          type: AccountStatusEnumInt
+          default: 2
+          "$ref": "#/components/schemas/AccountStatusEnumInt"
+        company:
+          type: string
+        maxDomains:
+          type: integer
+          default: 1
+        maxUsers:
+          type: integer
+          default: 100
+        concurrentAudits:
+          type: integer
+          default: 10
+        concurrentJourneys:
+          type: integer
+          default: 10
+        videoSupport:
+          type: boolean
+          default: true
+        reportSupport:
+          type: boolean
+          default: true
+        authSupport:
+          type: boolean
+          default: true
+        deviceSupport:
+          type: boolean
+          default: true
+        auditActionSupport:
+          type: boolean
+          default: true
+        strongPasswordSupport:
+          type: boolean
+          default: false
+        maxMobileApps:
+          type: integer
+          default: 1
+        vpn:
+          "$ref": "#/components/schemas/Vpn"
+        auditPageLimit:
+          type: integer
+          default: 1000
+        webJourneyRunLimit:
+          type: integer
+          default: 1
+        allowOverages:
+          type: boolean
+          default: false
+        retentionPolicyId:
+          type: integer
+          default: 1
+        customProxySupport:
+          type: boolean
+          default: true
+        domains:
+          type: array
+          items:
+            type: string
+        notes:
+          type: string
+          nullable: true
+    Vpn:
+      type: object
+      required:
+        - vpnSupport
+      properties:
+        vpnCredentials:
+          type: string
+          nullable: true
+        vpnSupport:
+          type: boolean
+          default: false
+    CreateAccountRequest:
+      type: object
+      required:
+        - account
+        - primaryUser
+        - autoConfigure
+      properties:
+        autoConfigure:
+          type: boolean
+          default: true
+        account:
+          "$ref": "#/components/schemas/CreateAccountDTO"
+        primaryUser:
+          "$ref": "#/components/schemas/PrimaryUser"
+    PrimaryUser:
+      type: object
+      required:
+        - username
+        - permissions
+        - firstName
+        - lastName
+        - email
+      properties:
+        username:
+          type: string
+        timezone:
+          type: string
+        permissions:
+          type: integer
+        firstName:
+          type: string
+        lastName:
+          type: string
+        email:
+          type: string
+    AccountDataLayersDTO:
+      type: object
+      required:
+        - accountId
+        - dataLayers
+      properties:
+        accountId:
+          type: integer
+        dataLayers:
+          type: array
+          items:
+            "$ref": "#/components/schemas/DataLayer"
+    DataLayersRequest:
+      type: object
+      required:
+        - dataLayers
+      properties:
+        dataLayers:
+          type: array
+          items:
+            "$ref": "#/components/schemas/DataLayer"
+    DataLayer:
+      type: object
+      required:
+        - dataLayer
+      properties:
+        dataLayer:
+          type: string
+  parameters:
+    AccountId:
+      name: accountId
+      in: path
+      required: true
+      description: Unique identification number for account
+      deprecated: false
+      x-allowEmptyValue: false
+      schema:
+        "$ref": "#/components/schemas/AccountId"
+    PageParam:
+      in: query
+      name: page
+      description: Number of results page of an endpoint with paginated results
+      required: false
+      schema:
+        type: integer
+        default: 0
+        minimum: 0
+    SizeParam:
+      in: query
+      name: size
+      description: Number of results on page
+      required: false
+      schema:
+        type: integer
+        maximum: 200
+        default: 100
+        minimum: 10
+    SortDescParam:
+      name: sortDesc
+      in: query
+      description: Controls sorting order
+      required: false
+      schema:
+        type: boolean
+        default: false
+    SharedLinkId:
+      name: sharedLinkId
+      in: path
+      required: true
+      description: Unique identification number for shared link
+      schema:
+        type: integer
+        format: int64
+  responses:
+    UnAuthorized:
+      description: Unauthorized
+    Forbidden:
+      description: Forbidden
+    NotFound:
+      description: Not Found
